@@ -44,8 +44,37 @@ bool* knapsack(int v[], int w[], int n, int C) {
   bool* SS = (bool*)malloc(sizeof(bool) * (n + 1));
 
   // 動的計画法のプログラム（配列S[][]を計算）
+  for (i = 0; i <= C; i++) {
+    G[0][i] = 0;
+    S[0][i] = false;
+  }
+  for (k = 1; k <= n; k++) {
+    for (i = 0; i <= C; i++) {
+      if (i < w[k]) {
+        G[k][i] = G[k - 1][i];
+        S[k][i] = false;
+      } else {
+        v1 = G[k - 1][i - w[k]] + v[k];
+        if (G[k - 1][i] > v1) {
+          G[k][i] = G[k - 1][i];
+          S[k][i] = false;
+        } else {
+          G[k][i] = v1;
+          S[k][i] = true;
+        }
+      }
+    }
+  }
 
   // 配列G[][]と配列S[][]から選択された荷物の集合SS[]を計算
+  for (k = n, i = C; k > 0; k--) {
+    if (S[k][i]) {
+      SS[k] = true;
+      i = i - w[k];
+    } else {
+      SS[k] = false;
+    }
+  }
 
   return SS;
 }
@@ -54,9 +83,14 @@ int main(int argc, char** argv) {
   /* 教科書：表 6.1の例
      v[1]〜v[4]：価格
      w[1]〜w[4]：重さ */
-  int num = 4;
-  int v[] = {0, 250, 380, 420, 520};
-  int w[] = {0, 1, 2, 4, 3};
+  // int num = 4;
+  // int v[] = {0, 250, 380, 420, 520};
+  // int w[] = {0, 1, 2, 4, 3};
+
+  // 荷物数が10の例
+  int num = 10;
+  int v[] = {0, 47, 20, 39, 22, 58, 45, 68, 21, 56, 30};
+  int w[] = {0, 14, 11, 10, 6, 13, 4, 2, 1, 12, 9};
 
   // 引数処理
   if (argc == 3) {
